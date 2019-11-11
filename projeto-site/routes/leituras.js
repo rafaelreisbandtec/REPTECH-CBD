@@ -4,37 +4,37 @@ var sequelize = require('../models').sequelize;
 var Leitura = require('../models').Leitura;
 
 /* Recuperar as últimas N leituras */
-router.get('/ultimas', function(req, res, next) {
-	
+router.get('/ultimas', function (req, res, next) {
+
 	// quantas são as últimas leituras que quer? 8 está bom?
 	const limite_linhas = 7;
 
 	console.log(`Recuperando as últimas ${limite_linhas} leituras`);
-	
+
 	const instrucaoSql = `select top ${limite_linhas} 
-						temperatura, 
-						umidade, 
-						momento,
-						FORMAT(momento,'HH:mm:ss') as momento_grafico 
-						from leitura order by id desc`;
+						Media_Temp, 
+						Media_Umid, 
+						Data_Hora,
+						FORMAT(Data_Hora,'HH:mm:ss') as momento_grafico 
+						from TB_EVENTOS order by identificador desc`;
 
 	sequelize.query(instrucaoSql, {
 		model: Leitura,
-		mapToModel: true 
-	  })
-	  .then(resultado => {
+		mapToModel: true
+	})
+		.then(resultado => {
 			console.log(`Encontrados: ${resultado.length}`);
 			res.json(resultado);
-	  }).catch(erro => {
+		}).catch(erro => {
 			console.error(erro);
 			res.status(500).send(erro.message);
-	  });
+		});
 });
 
 
 // tempo real (último valor de cada leitura)
 router.get('/tempo-real', function (req, res, next) {
-	
+
 	console.log(`Recuperando as últimas leituras`);
 
 	const instrucaoSql = `select top 1 temperatura, umidade from leitura order by id desc`;
@@ -46,13 +46,13 @@ router.get('/tempo-real', function (req, res, next) {
 			console.error(erro);
 			res.status(500).send(erro.message);
 		});
-  
+
 });
 
 
 // estatísticas (max, min, média, mediana, quartis etc)
 router.get('/estatisticas', function (req, res, next) {
-	
+
 	console.log(`Recuperando as estatísticas atuais`);
 
 	const instrucaoSql = `select 
@@ -71,7 +71,7 @@ router.get('/estatisticas', function (req, res, next) {
 			console.error(erro);
 			res.status(500).send(erro.message);
 		});
-  
+
 });
 
 
